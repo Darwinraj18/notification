@@ -4,13 +4,13 @@ require "bootstrap.php";
 session_start();
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // /controller/method/
-echo'$uri';
+
 $uri = explode( '/', $uri ); // ['','controller','method']
 
 $count = count($uri); // 3
 
 $controller = ucfirst($uri[$count-2])."Controller"; // ['','Controller','method'] Capitalize second element
-echo "$controller";
+
 require "controller/".$controller.".php"; // "controller/UsersController.php" if the path is "/users/view"
  
 $objFeedController = new $controller();
