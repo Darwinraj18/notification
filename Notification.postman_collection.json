@@ -1,0 +1,40 @@
+{
+	"info": {
+		"_postman_id": "7b0dd985-80b7-4ceb-9386-af337a1070e0",
+		"name": "Notification",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29446349"
+	},
+	"item": [
+		{
+			"name": "GET notification",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/notification/index.php/notification/notification/getNotification",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"notification",
+						"index.php",
+						"notification",
+						"notification",
+						"getNotification"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "m15",
+							"disabled": true
+						}
+					]
+				},
+				"description": "GET notification details(id,subcontent,img,description) form notification table"
+			},
+			"response": []
+		}
+	]
+}
