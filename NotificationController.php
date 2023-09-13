@@ -43,7 +43,7 @@ public function deleteNotificationByIdAction() {
         $this->sendOutput(json_encode(['message' => 'Notification deleted']));
     } else {
         
-        $this->sendOutput(json_encode(['error' => 'Notification not found']), [self::APP_JSON, self::HTTP_NOT_FOUND]);
+        $this->sendOutput(json_encode(['error' => 'Notification not found']));
     }
 }
 public function createNotification(){
