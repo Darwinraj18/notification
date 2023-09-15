@@ -33,15 +33,12 @@ class NotificationModel {
     return $query->execute();
 }
 //create notification
-public function createNotification($id, $subcontent, $img, $des) {
-    $sql = "INSERT INTO `notification`(`id`, `subcontent`, `img`, `des`) VALUES (:id, :subcontent, :img,: )";
+public function createNotification(){
+    $sql=("INSERT INRTO notification (id,subcontent,des,img) VALUES(? ,?, ?)");
     $dbc = UtilityModel::getDBConnection();
-    $query = $dbc->prepare($sql);
-    $query->bindParam(':id', $idR);
-    $query->bindParam(':subcontent', $subcontent);
-    $query->bindParam(':img', $img);
-    $query->bindParam(':des', $des);
-    return $query->execute();
+    $sql=$dbc->prepare($sql);
+    $query=$dbc->prepare($sql);
+    $query->bindParam("sss",$id,$subcontent,$des,$img);
+    $query->execute();
 }
-
 }
