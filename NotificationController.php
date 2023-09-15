@@ -46,17 +46,18 @@ public function deleteNotificationByIdAction() {
         $this->sendOutput(json_encode(['error' => 'Notification not found']));
     }
 }
-public function createNotification(){
+ public function createNotification(){
+    $data = json_decode(file_get_contents("php://input"));//This PHP function reads the raw POST data from the request body
     $id = $_POST['id'];
     $subcontent = $_POST['subcontent'];
     $img = $_POST['img'];
     $des= $_POST['des'];
     $model=new NotificationModel();
-    $success=$model->createNotification($id,$subcontent,$img,$des);
+    $success=$model->createNotification();
     if ($success) {
         $this->sendOutput(json_encode(['message' => 'Notification created']));
     } 
-
+ 
 }
 }
 
