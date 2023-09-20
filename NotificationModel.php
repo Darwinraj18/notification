@@ -97,7 +97,33 @@ public function deleteCustomerById($entity_id){
     $query->bindParam(':entity_id', $entity_id);
     return $query->execute(); 
 }
+//UserNotification
+public function createUserNotification($user_id, $notification_id, $is_read) {
+    $dbc = UtilityModel::getDBConnection();
+    try {
+        $sql = "INSERT INTO usernotification (user_id, notification_id, is_read) VALUES (:user_id, :notification_id, :is_read)";
+        $query = $dbc->prepare($sql);
+        $query->bindParam(':user_id', $user_id, PDO::PARAM_INT); 
+        $query->bindParam(':notification_id', $notification_id, PDO::PARAM_INT); 
+        $query->bindParam(':is_read', $is_read, PDO::PARAM_BOOL); 
+        $query->execute(); 
+    } catch (PDOException $e) {
+        // Handle any exceptions or errors here
+        echo "Error: " . $e->getMessage();
+    }
+}
+public function sendnotificationById(){
+    $sql = "SELECT id, subcontent, img, des, link
+    FROM notification
+    JOIN mg_customer_entity ON notification_id = :notification_id
+    WHERE user_id = :user_id";
+$dbc = UtilityModel::getDBConnection();
+$query = $dbc->prepare($sql);
+$query->bindParam(':notification_id', $notificationId, PDO::PARAM_INT);
+$query->bindParam(':user_id', $userId, PDO::PARAM_INT);
+$query->execute();
 
+}
 
 }
 ?>
