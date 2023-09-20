@@ -126,6 +126,31 @@ public function deleteCustomerByIdAction(){
     
     }
 }
-
+//create usernotification
+    public function createusernotification(){
+        $user_id=$_POST['user_id'];
+        $notification_id=$_POST['notification_id'];
+        $is_read=$_POST['is_read'];
+       ;
+        $model=new NotificationModel();
+        $success=$model->createusernotification($user_id,$notification_id,$is_read);
+        if($success){
+            $this->sendOutput(json_encode(['message' => 'user notification created']));
+        } 
+    }
+    public function sendnotificationByIdAction(){
+        $model = new NotificationModel();
+        $id=$_POST['id'];
+        
+        $success=$model->sendnotificationById($id);
+        if ($success) {
+            // Send a success response 
+            $this->sendOutput(json_encode(['message' => 'Notification updated']));
+        } else {
+            
+            $this->sendOutput(json_encode(['error' => 'Notification not found']));
+        
+        }
+    }
 }
 ?>
