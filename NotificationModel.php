@@ -3,7 +3,7 @@ require_once 'UtilityModel.php';
 
 class NotificationModel {
 
-    // Get all Notifications
+    // Get all Notifications.
     public function getNotifications() {
         $sql = 'select * from notification';
 
@@ -33,43 +33,52 @@ class NotificationModel {
     return $query->execute();
 
 }
-public function updateNotificationById($id, $subcontent, $des, $img, $link) {
+    public function updateNotificationById($id, $subcontent, $des, $img, $link) {
     $sql = "UPDATE notification SET subcontent = :subcontent, des = :des, img = :img, link = :link WHERE id = :id";
     $dbc = UtilityModel::getDBConnection();
     $query = $dbc->prepare($sql);
     
-    $query->bindParam(':id', $id, PDO::PARAM_INT);
+  $query->bindParam(':id', $id, PDO::PARAM_INT);
     $query->bindParam(':subcontent', $subcontent, PDO::PARAM_STR);
     $query->bindParam(':des', $des, PDO::PARAM_STR);
-    $query->bindParam(':img', $img, PDO::PARAM_STR);
+    $query->bindParam(':img', $img, PDO::PARAM_LOB);
     $query->bindParam(':link', $link, PDO::PARAM_STR);
 
     return $query->execute();
 }
 
 
-public function createNotification($subcontent, $des, $img,$link) {
-    $sql = "INSERT INTO notification (subcontent, des, img,link) VALUES (:subcontent, :des, :img,:link)";
+public function createNotification($subcontent, $des, $img, $link) {
+    $sql = "INSERT INTO notification (subcontent, des, img, link) VALUES (:subcontent, :des, :img, :link)";
     $dbc = UtilityModel::getDBConnection();
-    
-    // Prepare the SQL query
     $query = $dbc->prepare($sql);
-
-    // Bind parameters with data types
-    // Assuming $id, $subcontent, $des, and $img are of the correct data types (e.g., integers, strings, etc.)
-  //$query->bindParam("ssb",  $subcontent, $des, $img);
- // $query->bindParam(':id', $id, PDO::PARAM_STR);
-   $query->bindParam(':subcontent', $subcontent, PDO::PARAM_STR);
+    $query->bindParam(':subcontent', $subcontent, PDO::PARAM_STR);
     $query->bindParam(':des', $des, PDO::PARAM_STR);
     $query->bindParam(':img', $img, PDO::PARAM_LOB);
-    $query->bindParam(':link',$link, PDO::PARAM_STR);
+    $query->bindParam(':link', $link, PDO::PARAM_STR);
+   // $query->bindParam(':city', $city, PDO::PARAM_STR);
+    //$query->bindParam(':zipcode', $zipcode, PDO::PARAM_INT);
     // Execute the query
-   return  $query->execute();
-    
-   
-}
+    $query->execute();
 
-public function createCustomer($email, $firstname, $lastname,$city) {
+    // Check if the insertion was successful
+    if ($query->rowCount() > 0) {
+       // Fetch the newly inserted record
+       $lastInsertId = $dbc->lastInsertId();
+       $sql = 'SELECT * FROM notification WHERE id = :id';
+       $query = $dbc->prepare($sql);
+       $query->bindParam(':id', $lastInsertId, PDO::PARAM_INT);
+       $query->execute();
+       return $query->fetch(PDO::FETCH_ASSOC);
+   } else {
+       return false;
+   }
+
+
+
+
+//create customer
+    public function createCustomer($email, $firstname, $lastname,$city,$zipcode) {
     $sql = "INSERT INTO mg_customer_entity (email,firstname, lastname, city) VALUES (:email, :firstname, :lastname,:city)";
     $dbc = UtilityModel::getDBConnection();
     $query = $dbc->prepare($sql);
@@ -77,6 +86,7 @@ public function createCustomer($email, $firstname, $lastname,$city) {
     $query->bindParam(':firstname', $firstname, PDO::PARAM_STR);
     $query->bindParam(':lastname', $lastname, PDO::PARAM_LOB);
     $query->bindParam(':city',$city, PDO::PARAM_STR);
+    $query->bindParam(':zipcode',$zipcode, PDO::PARAM_STR);
     // Execute the query
    return  $query->execute();
 } 
@@ -97,18 +107,30 @@ public function deleteCustomerById($entity_id){
     $query->bindParam(':entity_id', $entity_id);
     return $query->execute(); 
 }
+
 //UserNotification
-public function createUserNotification($user_id, $notification_id, $is_read) {
+public function createUserNotification($cities,$zipcodes,$notification_id) {
+    $cities_id_array = explode(',',$cities);
+    $zipcodes_id_array= explode(',',$zipcodes);
     $dbc = UtilityModel::getDBConnection();
+   // $dbc->beginTransaction();
+    $is_read=false;
     try {
         $sql = "INSERT INTO usernotification (user_id, notification_id, is_read) VALUES (:user_id, :notification_id, :is_read)";
         $query = $dbc->prepare($sql);
+
+        foreach($cities_id_array as $city_id){
+            $user_id->getuserIdBycity($city_id);
+
+        foreach($user_id as $user_id){
         $query->bindParam(':user_id', $user_id, PDO::PARAM_INT); 
         $query->bindParam(':notification_id', $notification_id, PDO::PARAM_INT); 
         $query->bindParam(':is_read', $is_read, PDO::PARAM_BOOL); 
         $query->execute(); 
+    }
+        }
     } catch (PDOException $e) {
-        // Handle any exceptions or errors here
+    
         echo "Error: " . $e->getMessage();
     }
 }
@@ -124,6 +146,17 @@ $query->bindParam(':user_id', $userId, PDO::PARAM_INT);
 $query->execute();
 
 }
+public  function getuserIdBycity($city_id){
+    $sql="SELECT * FROM mg_customer_entity WHERE city_id=:city_id";
+    $dbc=   UtilityModel::getDBConnection();
+    $query=$dbc->prepare($sql);
+    $query->bindParam(':city_id',$city_id, PDO::PARAM_INT);
 
+    $query->execute();
+    $user_ids =$query->fetchAll(PDO::FETCH_COLUMN);
+    return $user_ids;
 }
+}
+
+
 ?>
