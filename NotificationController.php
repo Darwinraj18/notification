@@ -47,8 +47,9 @@ class NotificationController extends BaseController
     
     }
 }
-public function updateNotificationByIdAction(){
-    $id=$_GET['id'];
+    public function updateNotificationByIdAction(){
+        echo"hello";
+    $id=$_POST['id'];
     $subcontent = $_POST['subcontent'];
     $img = $_FILES['img']['tmp_name'];
     $des = $_POST['des'];
@@ -57,7 +58,7 @@ public function updateNotificationByIdAction(){
     $success=$model->updateNotificationById($id,$subcontent,$img,$des,$link);
     if ($success) {
         // Send a success response 
-        $this->sendOutput(json_encode(['message' => 'Notification deleted']));
+        $this->sendOutput(json_encode(['message' => 'Notification updated']));
     } else {
         
         $this->sendOutput(json_encode(['error' => 'Notification not found']));
@@ -71,12 +72,16 @@ public function createNotificationAction() {
     $img = $_FILES['img']['tmp_name'];
     $des = $_POST['des'];
     
-
-    $link = isset($_POST['link']) ? $_POST['link'] : '';    // Check if 'link' key exists and is not empty
+    // Check if 'link' key exists and is not empty
+    $link = isset($_POST['link']) ? $_POST['link'] : '';
+   // $city=$_POST['city'];
+    //$zipcode=$_POST['zipcode'];
 
     $model = new NotificationModel();
     $success = $model->createNotification($subcontent, $des, $img, $link);
-
+    
+    $userNotificationModel= new UserNotificationModel();
+  $success =   $userNotificationModel->createuserNotification($citie,$zipcodes,$success['id']);
     if ($success) {
         $this->sendOutput(json_encode(['message' => 'Notification created']));
     } else {
@@ -91,8 +96,9 @@ public function createCustomerAction(){
     $firstname=$_POST['firstname'];
     $lastname=$_POST['lastname'];
     $city=$_POST['city'];
+    $zipcode=$_POST['zipcode'];
     $model=new NotificationModel();
-    $success=$model->createCustomer($email,$firstname,$lastname,$city);
+    $success=$model->createCustomer($email,$firstname,$lastname,$city,$zipcode);
     if($success){
         $this->sendOutput(json_encode(['message' => 'user created']));
     } else {
@@ -102,8 +108,8 @@ public function createCustomerAction(){
 //GET Customer
 public function getCustomerByIdAction()
     {
-        $entity_id=$_GET['entity_id'];
-        $model = new NotificationModel();
+        $entity_id=$_GET['entity_id'];// Get the notification ID from the request
+        $model = new NotificationModel();// Call the notificationmodel method to delete the notification by ID
         $Customer=$model->getCustomerById($entity_id);
         if($Customer){
             $this->sendOutput(json_encode($Customer));
