@@ -75,18 +75,21 @@ public function createNotificationAction() {
     
     // Check if 'link' key exists and is not empty
     $link = isset($_POST['link']) ? $_POST['link'] : '';
-    $city=$_POST['city'];
-    
-    $zipcode = isset($_POST['zipcode']) ? $_POST['zipcode'] : ''; // Check if 'zipcode' key exists, use empty string if not found
+    $city = isset($_POST['city']) ? $_POST['city'] : '';
 
+    
+    $zipcode = isset($_POST['zipcode']) ? $_POST['zipcode'] : ''; //  is a ternary conditional statement that Check if 'zipcode' key exists, use empty string if not found
+//$zipcode=$_POST['zipcode'];
 
     $model = new NotificationModel();
     $success = $model->createNotification($subcontent, $des, $img, $link);
     
     $userNotificationModel= new UserNotificationModel();
-  $success =   $userNotificationModel->createUserNotification($city,$zipcode,$success['id']);
+      $success =   $userNotificationModel->createUserNotification($city,$zipcode,$success['id']);
     if ($success) {
-        $this->sendOutput(json_encode(['message' => 'Notification created']));
+        $this->sendOutput(
+            json_encode($success),
+            array(BaseController::APP_JSON, BaseController::HTTPOK));
     } else {
         $this->sendOutput(json_encode(['error' => 'Unable to create Notification']));
     }
@@ -141,12 +144,12 @@ public function deleteCustomerByIdAction(){
         $notification_id=$_POST['notification_id'];
         $is_read=$_POST['is_read'];
        
-        $model=new NotificationModel();
-        $success=$model->createusernotification($user_id,$notification_id,$is_read);
+        $userNotificationModel= new UserNotificationModel();
+        $success=$userNotificationModel->createUserNotification($user_id,$notification_id,$is_read);
         if($success){
             $this->sendOutput(json_encode(['message' => 'user notification created']));
         } 
     }
-    
-}
+  
+}//
 ?>
