@@ -78,7 +78,7 @@ public function createNotificationAction() {
     $city=$_POST['city'];
     
     $zipcode = isset($_POST['zipcode']) ? $_POST['zipcode'] : ''; // Check if 'zipcode' key exists, use empty string if not found
-//$zipcode=$_POST['zipcode'];
+
 
     $model = new NotificationModel();
     $success = $model->createNotification($subcontent, $des, $img, $link);
