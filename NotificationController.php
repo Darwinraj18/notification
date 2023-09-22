@@ -67,6 +67,7 @@ class NotificationController extends BaseController
 }
 
 public function createNotificationAction() {
+    
     $data = json_decode(file_get_contents("php://input"));
     $subcontent = $_POST['subcontent'];
     $img = $_FILES['img']['tmp_name'];
@@ -74,14 +75,16 @@ public function createNotificationAction() {
     
     // Check if 'link' key exists and is not empty
     $link = isset($_POST['link']) ? $_POST['link'] : '';
-   // $city=$_POST['city'];
-    //$zipcode=$_POST['zipcode'];
+    $city=$_POST['city'];
+    
+    $zipcode = isset($_POST['zipcode']) ? $_POST['zipcode'] : ''; // Check if 'zipcode' key exists, use empty string if not found
+//$zipcode=$_POST['zipcode'];
 
     $model = new NotificationModel();
     $success = $model->createNotification($subcontent, $des, $img, $link);
     
     $userNotificationModel= new UserNotificationModel();
-  $success =   $userNotificationModel->createuserNotification($citie,$zipcodes,$success['id']);
+  $success =   $userNotificationModel->createUserNotification($city,$zipcode,$success['id']);
     if ($success) {
         $this->sendOutput(json_encode(['message' => 'Notification created']));
     } else {
@@ -137,26 +140,13 @@ public function deleteCustomerByIdAction(){
         $user_id=$_POST['user_id'];
         $notification_id=$_POST['notification_id'];
         $is_read=$_POST['is_read'];
-       ;
+       
         $model=new NotificationModel();
         $success=$model->createusernotification($user_id,$notification_id,$is_read);
         if($success){
             $this->sendOutput(json_encode(['message' => 'user notification created']));
         } 
     }
-    public function sendnotificationByIdAction(){
-        $model = new NotificationModel();
-        $id=$_POST['id'];
-        
-        $success=$model->sendnotificationById($id);
-        if ($success) {
-            // Send a success response 
-            $this->sendOutput(json_encode(['message' => 'Notification updated']));
-        } else {
-            
-            $this->sendOutput(json_encode(['error' => 'Notification not found']));
-        
-        }
-    }
+    
 }
 ?>
