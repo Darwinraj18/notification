@@ -56,12 +56,12 @@ public function createNotification($subcontent, $des, $img, $link) {
     $query->bindParam(':des', $des, PDO::PARAM_STR);
     $query->bindParam(':img', $img, PDO::PARAM_LOB);
     $query->bindParam(':link', $link, PDO::PARAM_STR);
-    $query->bindParam(':city', $city, PDO::PARAM_STR);
-    $query->bindParam(':zipcode', $zipcode, PDO::PARAM_STR);
+  //  $query->bindParam(':city', $city, PDO::PARAM_STR);
+    //$query->bindParam(':zipcode', $zipcode, PDO::PARAM_STR);
 
     // Execute the query
     $query->execute();
-    echo"hi";
+  
     // Check if the insertion was successful
     if ($query->rowCount() > 0) {
        // Fetch the newly inserted record
@@ -74,9 +74,7 @@ public function createNotification($subcontent, $des, $img, $link) {
    } else {
        return false;
    }
-
 }
-
 //create customer
     public function createCustomer($email, $firstname, $lastname,$city,$zipcode) {
     $sql = "INSERT INTO mg_customer_entity (email,firstname, lastname, city,zipcode) VALUES (:email, :firstname, :lastname,:city,:zipcode)";
@@ -118,21 +116,35 @@ class UserNotificationModel{
     $cities_id_array = explode(',',$city);
     $zipcodes_id_array= explode(',',$zipcode);
     $dbc = UtilityModel::getDBConnection();
-   // $dbc->beginTransaction();
+   //$dbc->beginTransaction();
     $is_read=false;
     try {
         $sql = "INSERT INTO usernotification (user_id, notification_id, is_read) VALUES (:user_id, :notification_id, :is_read)";
         $query = $dbc->prepare($sql);
 
         foreach($cities_id_array as $city){
-            $user_ids->getuserIdsBycity($city);
-
+        //    echo"$city";
+            $user_ids=$this->getuserIdsBycity($city);
+         
         foreach($user_ids as $user_id){
+            //echo" $user_id";
         $query->bindParam(':user_id', $user_id, PDO::PARAM_INT); 
         $query->bindParam(':notification_id', $notification_id, PDO::PARAM_INT); 
         $query->bindParam(':is_read', $is_read, PDO::PARAM_BOOL); 
-        $query->execute(); 
+    $query->execute(); 
     }
+        }
+        foreach($zipcodes_id_array as $zipcode){
+            echo" $zipcode";
+            $user_ids=$this->getuserIdsByzipcode($zipcode);
+         
+            foreach($user_ids as $user_id){
+            echo" $user_id";
+            $query->bindParam(':user_id', $user_id, PDO::PARAM_INT); 
+            $query->bindParam(':notification_id', $notification_id, PDO::PARAM_INT); 
+            $query->bindParam(':is_read', $is_read, PDO::PARAM_BOOL); 
+        $query->execute(); 
+            }
         }
     } catch (PDOException $e) {
     
@@ -140,17 +152,28 @@ class UserNotificationModel{
     }
 }
 
-
-public  function getuserIdsBycity($city){
-    $sql="SELECT * FROM mg_customer_entity WHERE city =:city";
+//get userIdBy city
+ public  function getuserIdsBycity($city){
+    $sql="SELECT entity_id FROM mg_customer_entity WHERE city =:city";
     $dbc=   UtilityModel::getDBConnection();
     $query=$dbc->prepare($sql);
-    $query->bindParam(':city',$city, PDO::PARAM_INT);
+    $query->bindParam(':city',$city, PDO::PARAM_STR);
+
+    $query->execute();
+    $user_ids =$query->fetchAll(PDO::FETCH_COLUMN);
+    return $user_ids;
+}
+//get userIdBy zipcode
+ public  function getuserIdsByzipcode($zipcode){
+    $sql="SELECT entity_id FROM mg_customer_entity WHERE zipcode =:zipcode";
+    $dbc=   UtilityModel::getDBConnection();
+    $query=$dbc->prepare($sql);
+    $query->bindParam(':zipcode',$zipcode, PDO::PARAM_STR);
 
     $query->execute();
     $user_ids =$query->fetchAll(PDO::FETCH_COLUMN);
     return $user_ids;
 }
 }
-
+//@friday
 ?>
