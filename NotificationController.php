@@ -48,7 +48,7 @@ class NotificationController extends BaseController
     }
 }
     public function updateNotificationByIdAction(){
-        echo"hello";
+        
     $id=$_POST['id'];
     $subcontent = $_POST['subcontent'];
     $img = $_FILES['img']['tmp_name'];
@@ -85,13 +85,60 @@ public function createNotificationAction() {
     $success = $model->createNotification($subcontent, $des, $img, $link);
     
     $userNotificationModel= new UserNotificationModel();
-      $success =   $userNotificationModel->createUserNotification($city,$zipcode,$success['id']);
-    if ($success) {
+      $success1 =   $userNotificationModel->createUserNotification($city,$zipcode,$success['id']);
+      
+    if ($success1) {
         $this->sendOutput(
-            json_encode($success),
+            json_encode($success1),
             array(BaseController::APP_JSON, BaseController::HTTPOK));
     } else {
         $this->sendOutput(json_encode(['error' => 'Unable to create Notification']));
+    }
+}
+
+//filter
+public function getNotificationBysubcontentAction()
+{
+    //echo"hello";
+    $subcontent=$_GET['subcontent'];
+   // echo"$subcontent";
+    $model = new NotificationModel();
+    $notification = $model->getNotificationsBysubcontent($subcontent);
+    if ($notification) {
+        $this->sendOutput(json_encode($notification));
+    } else {
+       $this->sendOutput(json_encode(['error' => 'Notification not found']));
+    }
+}
+
+public function getNotificationBylinkAction()
+{
+    //echo"hello";
+    $link=$_GET['link'];
+   // echo"$subcontent";
+    $model = new NotificationModel();
+    $notification = $model->getNotificationsBylink($link);
+    if ($notification) {
+        $this->sendOutput(json_encode($notification));
+    } else {
+       $this->sendOutput(json_encode(['error' => 'Notification not found']));
+    }
+}
+
+
+public function getNotificationBydesAction()
+{
+  //  echo"hello";
+  $des=$_GET['des'];
+  
+
+   // echo"$des";
+    $model = new NotificationModel();
+    $notification = $model->getNotificationsBydes($des);
+    if ($notification) {
+        $this->sendOutput(json_encode($notification));
+    } else {
+       $this->sendOutput(json_encode(['error' => 'Notification not found']));
     }
 }
 
