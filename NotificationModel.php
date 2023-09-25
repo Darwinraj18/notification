@@ -70,11 +70,62 @@ public function createNotification($subcontent, $des, $img, $link) {
        $query = $dbc->prepare($sql);
        $query->bindParam(':id', $lastInsertId, PDO::PARAM_INT);
        $query->execute();
-       return $query->fetch(PDO::FETCH_ASSOC);
+       return $query->fetch(PDO::FETCH_COLUMN);
    } else {
        return false;
    }
 }
+
+//filter
+
+public function getNotificationsBysubcontent($subcontent)
+
+{
+   
+    $sql = "SELECT * FROM notification WHERE subcontent = :subcontent";
+    $dbc = UtilityModel::getDBConnection();
+    $query = $dbc->prepare($sql);
+    $query->bindParam(':subcontent', $subcontent);
+    $query->execute();
+
+    // Fetch and return the result as an associative array
+   // return $query->fetchColumn(PDO::FETCH_COLUMN);
+   return $query->fetchAll(PDO::FETCH_ASSOC);
+
+}
+
+public function getNotificationsBylink($link)
+
+{
+   
+    $sql = "SELECT * FROM notification WHERE link = :link";
+    $dbc = UtilityModel::getDBConnection();
+    $query = $dbc->prepare($sql);
+    $query->bindParam(':link', $link);
+    $query->execute();
+
+    // Fetch and return the result as an associative array
+   // return $query->fetchColumn(PDO::FETCH_COLUMN);
+   return $query->fetchAll(PDO::FETCH_ASSOC);
+
+}
+
+public function getNotificationsBydes($des)
+
+{
+   
+    $sql = "SELECT * FROM notification WHERE des = :des";
+    $dbc = UtilityModel::getDBConnection();
+    $query = $dbc->prepare($sql);
+    $query->bindParam(':des', $des);
+    $query->execute();
+
+    // Fetch and return the result as an associative array
+    return $query->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+
 //create customer
     public function createCustomer($email, $firstname, $lastname,$city,$zipcode) {
     $sql = "INSERT INTO mg_customer_entity (email,firstname, lastname, city,zipcode) VALUES (:email, :firstname, :lastname,:city,:zipcode)";
